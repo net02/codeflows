@@ -46,14 +46,16 @@ function countMessages($keys, $message) {
     $combinations = [];
     foreach (str_split($keyPresses) as $key) {
         if ($key !== $prev) {
-            $result = mulmod($combinationsForSequence($prev, $qty), $result, MOD);
+            // apply the modulo here in order to avoid roundings, since:
+            // (x * y * z) % k == ((x * y) % k) * z) % k
+            $result = ($combinationsForSequence($prev, $qty) * $result) % MOD;
             $qty    = 1;
             $prev   = $key;
         } else {
             $qty++;
         }
     }
-    $result = mulmod($combinationsForSequence($prev, $qty), $result, MOD);
+    $result = ($combinationsForSequence($prev, $qty) * $result) % MOD;
 
     return $result;
 }
@@ -65,7 +67,9 @@ function threesomes($n) {
     $second = 0;
     $third  = 1;
     for ($i = 0; $i < $n; $i++) {
-        $curr = $first + $second + $third;
+        // anticipate the modulo here in order to avoid roundings, since:
+        // (x + y + z) % k == (x % k + y % k + z % k) % k
+        $curr = $first % MOD + $second % MOD + $third % MOD;
         $first = $second;
         $second = $third;
         $third = $curr;
@@ -81,30 +85,14 @@ function foursomes($n) {
     $third  = 0;
     $fourth = 1;
     for ($i = 0; $i < $n; $i++) {
-        $curr = $first + $second + $third + $fourth;
+        // same as in threesomes function
+        $curr = $first % MOD + $second % MOD + $third % MOD + $fourth % MOD;
         $first = $second;
         $second = $third;
         $third = $fourth;
         $fourth = $curr;
     }
     return $curr;
-}
-
-// Multiply with modulo, avoiding roundings and overflows
-function mulmod($a, $b, $mod) {
-    $res = 0;
-    $a %= $mod;
-
-    while ($b) {
-        if ($b & 1 == 1) {
-            $res = ($res + $a) % $mod;
-        }
-
-        $a = ($a << 1) % $mod;
-        $b >>= 1;
-    }
-
-    return $res;
 }
 
 $keys_count = intval(trim(fgets(STDIN)));
