@@ -43,7 +43,6 @@ function countMessages($keys, $message) {
     $result = 1;
     $qty    = 1;
     $prev   = null;
-    $combinations = [];
     foreach (str_split($keyPresses) as $key) {
         if ($key !== $prev) {
             // apply the modulo here in order to avoid roundings, since:
