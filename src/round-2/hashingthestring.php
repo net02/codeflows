@@ -12,6 +12,10 @@ for ($t = 0; $t < $tests_count; $t++) {
         continue;
     }
     $word = getMaxWord($n, $k);
+    if (strrev($word) === $word) {
+        fwrite(STDOUT, "-1" . PHP_EOL);
+        continue;
+    }
     fwrite(STDOUT, sprintf("%s %s", strrev($word), $word) . PHP_EOL);
 }
 

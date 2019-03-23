@@ -27,6 +27,9 @@ Results:
 4. 4/41 green, 37 red due to wrong answer
 5. 11/23 green, 12 red due to timeout
 
+Later fixes:
+2. ~~1/8 green, 7 red due to wrong answer (WTF?!)~~ 8/8 green (fuck me right?)
+
 ## Misc
 
 ### Testing
