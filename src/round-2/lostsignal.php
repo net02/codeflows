@@ -4,32 +4,28 @@ $tests_count = intval(trim(fgets(STDIN)));
 
 for ($t = 0; $t < $tests_count; $t++) {
     $offices = intval(trim(fgets(STDIN)));
-    $weigths = array_map(function($s) { return intval($s); }, explode(" ", trim((fgets(STDIN)))));
+    $weights = array_map(function($s) { return intval($s); }, explode(" ", trim((fgets(STDIN)))));
 
-    $receivers = [];
+    $configs = [];
     for ($i = 1; $i < $offices; $i++) {
         list($from, $to) = explode(" ", trim((fgets(STDIN))));
-        $receivers[$i] = [intval($from) - 1, intval($to)];
+        $configs[$i] = [intval($from) - 1, intval($to) - intval($from) + 1];
     }
 
-    fwrite(STDOUT, implode(getCosts($weigths, $receivers), " ") . PHP_EOL);
+    fwrite(STDOUT, implode(getCosts($weights, $configs), " ") . PHP_EOL);
 }
 
-function getCosts(array $weigths, array $receivers) {
+function getCosts(array $weights, array $configs) {
     $costs = [
-        0 => 0,
+        0 => $weights[0],
     ];
+    $results = [];
 
-    foreach ($receivers as $office => $senders) {
-        $minCost = null;
-        for ($from = $senders[0]; $from < $senders[1]; $from++) {
-            $cost = $costs[$from] + $weigths[$from];
-            $minCost = is_null($minCost) ? $cost : min($cost, $minCost);
-        }
-
-        $costs[$office] = $minCost;
+    foreach ($configs as $office => $config) {
+        $cost = min(array_slice($costs, $config[0], $config[1]));
+        $costs[$office] = $cost + ($weights[$office] ?? 0);
+        $results[] = $cost;
     }
 
-    array_shift($costs);
-    return $costs;
+    return $results;
 }
